@@ -9,12 +9,14 @@
  
 } */
 
+########## CUSTOM MODULE ###########
 
 module "sg" {
+  count = length(var.sg_names)
   source = "git::https://github.com/devops-cloud-shop/terraform-aws-sg.git?ref=main"
   project_name = var.project_name
   environment = var.environment
-  sg_name =  "mongodb"
-  sg_description = "Security group for mongodb service"
+  sg_name =  var.sg_names[count.index]
+  sg_description = "Security group created for ${var.sg_names[count.index]}"
   vpc_id = local.vpc_id
 }
