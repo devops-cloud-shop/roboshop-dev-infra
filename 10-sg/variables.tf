@@ -13,7 +13,10 @@ variable "sg_names" {
         #backend
         "catalogue", "cart", "user", "payment", "shipping",
         #frontend
-        "frontend" 
+        "frontend",
+        #bastion
+        "bastion" 
+
     ]
   
 }
