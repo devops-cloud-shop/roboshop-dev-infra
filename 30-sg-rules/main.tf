@@ -30,8 +30,30 @@ resource "aws_security_group_rule" "bastion_laptop" {
 #mongodb accepting traffic from bastion
 resource "aws_security_group_rule" "mongodb_bastion" {
   type              = "ingress"
-  security_group_id = local.mongodb_sg_id #bastion SG ID
-  source_security_group_id = local.bastion_sg_id
+  security_group_id = local.mongodb_sg_id 
+  source_security_group_id = local.bastion_sg_id #bastion SG ID
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  
+}
+
+#redis allow connection from bastion
+resource "aws_security_group_rule" "redis_bastion" {
+  type              = "ingress"
+  security_group_id = local.redis_sg_id 
+  source_security_group_id = local.bastion_sg_id #bastion SG ID
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  
+}
+
+#rabbitmq allow connection from bastion
+resource "aws_security_group_rule" "rabbitmq_bastion" {
+  type              = "ingress"
+  security_group_id = local.rabbitmq_sg_id 
+  source_security_group_id = local.bastion_sg_id #bastion SG ID
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
