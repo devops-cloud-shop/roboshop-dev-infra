@@ -65,7 +65,7 @@ resource "terraform_data" "redis" {
     host = aws_instance.redis.private_ip
     }
 
-  #terraform copies this file to mongodb server
+  #terraform copies this file to redis server
   provisioner "file" {
     source = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"    
@@ -106,7 +106,7 @@ resource "terraform_data" "rabbitmq" {
     host = aws_instance.rabbitmq.private_ip
     }
 
-  #terraform copies this file to mongodb server
+  #terraform copies this file to rabbitmq server
   provisioner "file" {
     source = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"    
@@ -154,7 +154,7 @@ resource "terraform_data" "mysql" {
     host = aws_instance.mysql.private_ip
     }
 
-  #terraform copies this file to mongodb server
+  #terraform copies this file to mysql server
   provisioner "file" {
     source = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"    
@@ -170,3 +170,39 @@ resource "terraform_data" "mysql" {
   }
 }
 
+#r53 records for mongodb
+resource "aws_route53_record" "mongodb" {
+  zone_id = var.zone_id
+  name    = "mongodb-${var.environment}.${var.domain_name}" # mongodb-dev.prav4cloud.online
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.mongodb.private_ip]
+  allow_overwrite = true
+}
+
+resource "aws_route53_record" "redis" {
+  zone_id = var.zone_id
+  name    = "redis-${var.environment}.${var.domain_name}" # redis-dev.prav4cloud.online
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.redis.private_ip]
+  allow_overwrite = true
+}
+
+resource "aws_route53_record" "mysql" {
+  zone_id = var.zone_id
+  name    = "mysql-${var.environment}.${var.domain_name}" # mysql-dev.prav4cloud.online
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.mysql.private_ip]
+  allow_overwrite = true
+}
+
+resource "aws_route53_record" "rabbitmq" {
+  zone_id = var.zone_id
+  name    = "rabbitmq-${var.environment}.${var.domain_name}" # rabbitmq-dev.prav4cloud.online
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.rabbitmq.private_ip]
+  allow_overwrite = true
+}
