@@ -18,7 +18,7 @@ resource "terraform_data" "catalogue" {
   
   connection {
     type = "ssh"
-    user = "eec2-user"
+    user = "ec2-user"
     password = "DevOps321"
     host = aws_instance.catalogue.private_ip
     }
@@ -83,7 +83,7 @@ resource "aws_lb_target_group" "catalogue" {
 }
 
 #creating launch template
-resource "aws_launch_template" "example" {
+resource "aws_launch_template" "catalogue" {
   name = "${local.common_name_suffix}-catalogue"
   image_id = aws_ami_from_instance.catalogue.id
 
@@ -149,5 +149,49 @@ resource "aws_autoscaling_group" "catalogue" {
 
   timeouts {
     delete = "15m"
+  }
+}
+
+#Autoscaling policy
+resource "aws_autoscaling_policy" "catalogue" {
+  autoscaling_group_name = aws_autoscaling_group.catalogue.name
+  name                   = "${local.common_name_suffix}-catalogue"
+  policy_type            = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 75.0
+  }
+}
+
+#create a listener rule
+resource "aws_lb_listener_rule" "catalogue" {
+  listener_arn = local.backend_alb_listener_arn
+  priority     = 10
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.catalogue.arn
+  }
+
+  condition {
+    host_header {
+      values = ["catalogue.backend-alb-${var.environment}.${var.domain_name}"]
+    }
+  }
+}
+
+#delete the instance using aws cli command
+resource "terraform_data" "catalogue_local" {
+  triggers_replace = [
+    aws_instance.catalogue.id
+  ]
+  
+  depends_on = [aws_autoscaling_policy.catalogue]
+  provisioner "local-exec" {
+    command = "aws ec2 terminate-instances --instance-ids ${aws_instance.catalogue.id}"
   }
 }
