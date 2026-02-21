@@ -184,7 +184,7 @@ resource "aws_lb_listener_rule" "catalogue" {
   }
 }
 
-#delete the instance using aws cli command
+#delete the old instance using aws cli command
 resource "terraform_data" "catalogue_local" {
   triggers_replace = [
     aws_instance.catalogue.id
