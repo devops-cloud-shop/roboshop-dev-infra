@@ -67,17 +67,87 @@ resource "aws_lb_target_group" "catalogue" {
   name     = "${local.common_name_suffix}-catalogue-tg"
   port     = 80
   protocol = "TCP"
-  vpc_id   = aws_vpc.main.id
+  vpc_id   = local.vpc_id
+  deregistration_delay = 60 #waiting period before deleting the instance
 
-  target_group_health {
-    dns_failover {
-      minimum_healthy_targets_count      = "1"
-      minimum_healthy_targets_percentage = "off"
-    }
+  health_check {
+    healthy_threshold = 2
+    interval = 10
+    matcher = "200-299"
+    path = "/health"
+    port = 8080
+    protocol = "HTTP"
+    timeout = 2
+    unhealthy_threshold = 2
+  }
+}
 
-    unhealthy_state_routing {
-      minimum_healthy_targets_count      = "1"
-      minimum_healthy_targets_percentage = "off"
+#creating launch template
+resource "aws_launch_template" "example" {
+  name = "${local.common_name_suffix}-catalogue"
+  image_id = aws_ami_from_instance.catalogue.id
+
+  instance_type = "t3.micro"
+
+  instance_initiated_shutdown_behavior = "terminate"
+
+  vpc_security_group_ids = [local.catalogue_sg_id]
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = merge(
+      local.common_tags,
+      {
+        Name = "${local.common_name_suffix}-catalogue"
+      }
+    )
+  }
+
+}
+
+#ASG
+resource "aws_autoscaling_group" "catalogue" {
+  name                      = "${local.common_name_suffix}-catalogue"
+  max_size                  = 5
+  min_size                  = 2
+  health_check_grace_period = 100
+  health_check_type         = "ELB"
+  desired_capacity          = 1
+  force_delete              = false
+
+  vpc_zone_identifier       = [local.private_subnet_ids]
+  target_group_arns = [aws_lb_target_group.catalogue.arn]
+
+  launch_template {
+    id      = aws_launch_template.catalogue.id
+    version = aws_launch_template.catalogue.latest_version
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50 #atleast 50% of instances should be up and running
     }
+    triggers = ["launch_template"]
+  }
+
+
+  dynamic "tag" {
+    for_each = merge(
+      local.common_tags,
+      {
+        Name = "${local.common_name_suffix}-catalogue"
+      }
+    )
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
+  }
+
+  timeouts {
+    delete = "15m"
   }
 }
