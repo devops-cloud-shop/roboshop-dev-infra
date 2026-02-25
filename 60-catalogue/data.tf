@@ -8,7 +8,7 @@ data "aws_ami" "prav-devops" {
 
   filter {
     name   = "name"
-    values = ["RedHat-9-DevOps-Practice"]
+    values = ["Redhat-9-DevOps-Practice"]
   }
 
   filter {
