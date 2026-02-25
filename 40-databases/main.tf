@@ -18,7 +18,7 @@ resource "terraform_data" "mongodb" {
   
   connection {
     type = "ssh"
-    user = "eec2-user"
+    user = "ec2-user"
     password = "DevOps321"
     host = aws_instance.mongodb.private_ip
     }
@@ -60,7 +60,7 @@ resource "terraform_data" "redis" {
   
   connection {
     type = "ssh"
-    user = "eec2-user"
+    user = "ec2-user"
     password = "DevOps321"
     host = aws_instance.redis.private_ip
     }
@@ -101,7 +101,7 @@ resource "terraform_data" "rabbitmq" {
   
   connection {
     type = "ssh"
-    user = "eec2-user"
+    user = "ec2-user"
     password = "DevOps321"
     host = aws_instance.rabbitmq.private_ip
     }
@@ -149,7 +149,7 @@ resource "terraform_data" "mysql" {
   
   connection {
     type = "ssh"
-    user = "eec2-user"
+    user = "ec2-user"
     password = "DevOps321"
     host = aws_instance.mysql.private_ip
     }
