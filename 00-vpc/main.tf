@@ -19,7 +19,7 @@ module "vpc" {
     database_subnet_cidrs = var.database_subnet_cidrs
 
     #peering required or not
-    is_peering_required = true
+    is_peering_required = false
     
 }
 
