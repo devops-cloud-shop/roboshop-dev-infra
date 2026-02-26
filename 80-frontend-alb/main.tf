@@ -27,8 +27,8 @@ resource "aws_lb_listener" "frontend_alb" {
     type = "fixed-response"
 
     fixed_response {
-      content_type = "text/html"
-      message_body = "<h1>Hi, I'm from HTTPS frontend ALB</h1>"
+      content_type = "text/plain"
+      message_body = "Hi, I'm from HTTPS frontend ALB"
       status_code  = "200"
     }
   }
@@ -37,7 +37,7 @@ resource "aws_lb_listener" "frontend_alb" {
 #route53 record for alb
 resource "aws_route53_record" "frontend_alb" {
   zone_id = var.zone_id
-  name    = "${var.project_name}-${var.environment}.${var.domain_name}" #roboshop-dev.prav4cloud.online
+  name    = "roboshop-${var.environment}.${var.domain_name}" #roboshop-dev.prav4cloud.online
   type    = "A"
   allow_overwrite = true
 
