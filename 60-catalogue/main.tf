@@ -66,7 +66,7 @@ resource "aws_ami_from_instance" "catalogue" {
 resource "aws_lb_target_group" "catalogue" {
   name     = "${local.common_name_suffix}-catalogue-tg"
   port     = 80
-  protocol = "TCP"
+  protocol = "HTTP"
   vpc_id   = local.vpc_id
   deregistration_delay = 60 #waiting period before deleting the instance
 
@@ -113,7 +113,7 @@ resource "aws_autoscaling_group" "catalogue" {
   min_size                  = 2
   health_check_grace_period = 100
   health_check_type         = "ELB"
-  desired_capacity          = 1
+  desired_capacity          = 2
   force_delete              = false
 
   vpc_zone_identifier       = local.private_subnet_ids
