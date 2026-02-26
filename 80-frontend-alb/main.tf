@@ -28,7 +28,7 @@ resource "aws_lb_listener" "frontend_alb" {
 
     fixed_response {
       content_type = "text/html"
-      message_body = "Hi, I'm from HTTPS frontend ALB"
+      message_body = "<h1>Hi, I'm from HTTPS frontend ALB</h1>"
       status_code  = "200"
     }
   }
