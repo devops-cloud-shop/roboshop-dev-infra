@@ -1,10 +1,10 @@
-# variable "component" {
-  
-# }
+variable "component" {
+    default = "catalogue"
+}
 
-# variable "rule_priority" {
-#     default = 10
-# }
+variable "rule_priority" {
+    default = 10
+}
 
 variable "components" {
     default = {
