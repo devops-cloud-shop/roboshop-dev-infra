@@ -10,12 +10,12 @@ resource "aws_lb" "frontend_alb" {
   tags = merge(
     local.common_tags,
     {
-        Name = "${local.common_name_suffix}-frontend_alb"
+        Name = "${local.common_name_suffix}-frontend-alb"
     }
   )
 }
 
-#Backend ALB listening on port 80
+#frontend ALB listening on port 443
 resource "aws_lb_listener" "frontend_alb" {
   load_balancer_arn = aws_lb.frontend_alb.arn
   port              = "443"
