@@ -1,5 +1,5 @@
 resource "aws_instance" "open_vpn" {
-  ami                     = local.ami_id #mandatory
+  ami                     = local.ami_id #mandatory ami-015bde79b8dffa19b
   instance_type           = "t3.micro" #mandatory
   vpc_security_group_ids  = [local.open_vpn_sg_id] #mandatory
   subnet_id               = local.public_subnet_id
